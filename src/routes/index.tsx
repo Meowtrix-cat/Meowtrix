@@ -1,13 +1,11 @@
+import { LoginForm } from '@/features/auth';
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/')({
-  component: App,
-});
-
-function App() {
-  return (
-    <div>
-      <h1 className='text-4xl font-bold text-red-500'>Hello World</h1>
+  component: () => (
+    <div className='container mx-auto p-4 flex flex-col items-center justify-center min-h-screen'>
+      <h1 className='text-3xl font-bold mb-8'>Meowtrix 앱</h1>
+      <LoginForm />
     </div>
-  );
-}
+  ),
+});
