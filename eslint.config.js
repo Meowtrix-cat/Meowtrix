@@ -1,15 +1,15 @@
-import js from '@eslint/js';
-import { FlatCompat } from '@eslint/eslintrc';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import js from '@eslint/js'
+import { FlatCompat } from '@eslint/eslintrc'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
   recommendedConfig: js.configs.recommended,
-});
+})
 
 export default [
   js.configs.recommended,
@@ -18,7 +18,8 @@ export default [
     'plugin:react-hooks/recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:import/recommended',
-    'plugin:import/typescript'
+    'plugin:import/typescript',
+    'plugin:prettier/recommended'
   ),
   {
     languageOptions: {
@@ -50,6 +51,7 @@ export default [
     },
     rules: {
       'react/react-in-jsx-scope': 'off',
+      'prettier/prettier': ['error', {}, { usePrettierrc: true }],
       'import/no-internal-modules': [
         'error',
         {
@@ -111,4 +113,4 @@ export default [
       ],
     },
   },
-];
+]
