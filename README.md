@@ -1,4 +1,4 @@
-Welcome to your new TanStack app! 
+Welcome to your new TanStack app!
 
 # Getting Started
 
@@ -17,6 +17,133 @@ To build this application for production:
 npm run build
 ```
 
+# FSD 아키텍처 (Feature-Sliced Design)
+
+이 프로젝트는 FSD 아키텍처를 따르고 있습니다. FSD는 프론트엔드 프로젝트를 기능 중심으로 구조화하는 방법론입니다.
+
+## 계층 구조
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ app/                                                     │
+│ 애플리케이션 초기화 및 설정                                  │
+└───────────────────────────┬─────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────┐
+│ routes/                                                  │
+│ 페이지 라우팅 (기존 FSD의 pages 대체)                        │
+└───────────────────────────┬─────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────┐
+│ widgets/                                                 │
+│ 여러 기능을 조합한 복잡한 UI 블록                            │
+└───────────────────────────┬─────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────┐
+│ features/                                                │
+│ 사용자 행동과 관련된 기능 (로그인, 검색 등)                    │
+└───────────────────────────┬─────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────┐
+│ entities/                                                │
+│ 비즈니스 엔티티 (사용자, 상품 등)                            │
+└───────────────────────────┬─────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────┐
+│ shared/                                                  │
+│ 프로젝트 전체에서 공유되는 기본 요소                          │
+└─────────────────────────────────────────────────────────┘
+```
+
+## 의존성 방향
+
+FSD에서 의존성은 항상 **위에서 아래로** 흐릅니다:
+
+- 상위 계층은 하위 계층에 의존할 수 있습니다.
+- 하위 계층은 상위 계층에 의존할 수 없습니다.
+
+예시:
+
+- `features`는 `entities`와 `shared`를 import 할 수 있습니다.
+- `entities`는 `shared`만 import 할 수 있고, `features`나 그 위의 계층은 import 할 수 없습니다.
+
+## 계층별 역할
+
+### app/
+
+- 애플리케이션 초기화 및 설정
+- 전역 프로바이더, 스타일, 진입점
+
+### routes/
+
+- 페이지 라우팅 (TanStack Router 사용)
+- 레이아웃 및 페이지 컴포넌트
+
+### widgets/
+
+- 여러 기능을 조합한 복잡한 UI 블록
+- 예: 헤더, 푸터, 사이드바, 대시보드 위젯
+
+### features/
+
+- 사용자 행동과 관련된 기능
+- "어떻게" 사용자가 상호작용하는지 정의
+- 예: 로그인, 회원가입, 검색, 필터링
+
+### entities/
+
+- 비즈니스 엔티티 (데이터 모델)
+- "무엇"을 다루는지 정의
+- 예: User, Product, Order, Comment
+
+### shared/
+
+- 프로젝트 전체에서 공유되는 기본 요소
+- UI 컴포넌트, 유틸리티, API 클라이언트, 상수
+
+## 엔티티 예시 구조
+
+```
+entities/
+├── user/
+│   ├── model/         # 데이터 모델, 타입, 상태
+│   ├── ui/            # 엔티티 관련 UI 컴포넌트
+│   ├── api/           # 엔티티 관련 API 호출
+│   └── index.ts       # 내보내기
+│
+├── product/
+│   ├── model/
+│   ├── ui/
+│   ├── api/
+│   └── index.ts
+│
+└── index.ts           # 모든 엔티티 내보내기
+```
+
+## 기능 예시 구조
+
+```
+features/
+├── auth/
+│   ├── model/         # 상태, 액션, 리듀서
+│   ├── ui/            # 로그인 폼, 회원가입 폼 등
+│   ├── api/           # 인증 관련 API 호출
+│   └── index.ts       # 내보내기
+│
+├── search/
+│   ├── model/
+│   ├── ui/
+│   ├── api/
+│   └── index.ts
+│
+└── index.ts           # 모든 기능 내보내기
+```
+
 ## Testing
 
 This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
@@ -29,8 +156,6 @@ npm run test
 
 This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
 
-
-
 ## Shadcn
 
 Add components using the canary version of [Shadcn](https://ui.shadcn.com/).
@@ -39,9 +164,8 @@ Add components using the canary version of [Shadcn](https://ui.shadcn.com/).
 pnpx shadcn@canary add button
 ```
 
-
-
 ## Routing
+
 This project uses [TanStack Router](https://tanstack.com/router). The initial setup is a file based router. Which means that the routes are managed as fiels in `src/routes`.
 
 ### Adding A Route
@@ -57,13 +181,13 @@ Now that you have two routes you can use a `Link` component to navigate between 
 To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
 
 ```tsx
-import { Link } from "@tanstack/react-router";
+import { Link } from '@tanstack/react-router';
 ```
 
 Then anywhere in your JSX you can use it like so:
 
 ```tsx
-<Link to="/about">About</Link>
+<Link to='/about'>About</Link>
 ```
 
 This will create a link that will navigate to the `/about` route.
@@ -77,31 +201,30 @@ In the File Based Routing setup the layout is located in `src/routes/__root.tsx`
 Here is an example layout that includes a header:
 
 ```tsx
-import { createRootRoute, Outlet } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/router-devtools'
+import { createRootRoute, Outlet } from '@tanstack/react-router';
+import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 
-import { Link } from "@tanstack/react-router";
+import { Link } from '@tanstack/react-router';
 
 export const Route = createRootRoute({
   component: () => (
     <>
       <header>
         <nav>
-          <Link to="/">Home</Link>
-          <Link to="/about">About</Link>
+          <Link to='/'>Home</Link>
+          <Link to='/about'>About</Link>
         </nav>
       </header>
       <Outlet />
       <TanStackRouterDevtools />
     </>
   ),
-})
+});
 ```
 
 The `<TanStackRouterDevtools />` component is not required so you can remove it if you don't want it in your layout.
 
 More information on layouts can be found in the [Layouts documentation](hthttps://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
 
 ## Data Fetching
 
@@ -112,9 +235,9 @@ For example:
 ```tsx
 const peopleRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: "/people",
+  path: '/people',
   loader: async () => {
-    const response = await fetch("https://swapi.dev/api/people");
+    const response = await fetch('https://swapi.dev/api/people');
     return response.json() as Promise<{
       results: {
         name: string;
@@ -149,7 +272,7 @@ npm install @tanstack/react-query @tanstack/react-query-devtools
 Next we'll need to creata query client and provider. We recommend putting those in `main.tsx`.
 
 ```tsx
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // ...
 
@@ -171,13 +294,13 @@ if (!rootElement.innerHTML) {
 You can also add TanStack Query Devtools to the root route (optional).
 
 ```tsx
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const rootRoute = createRootRoute({
   component: () => (
     <>
       <Outlet />
-      <ReactQueryDevtools buttonPosition="top-right" />
+      <ReactQueryDevtools buttonPosition='top-right' />
       <TanStackRouterDevtools />
     </>
   ),
@@ -187,15 +310,15 @@ const rootRoute = createRootRoute({
 Now you can use `useQuery` to fetch your data.
 
 ```tsx
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query';
 
-import "./App.css";
+import './App.css';
 
 function App() {
   const { data } = useQuery({
-    queryKey: ["people"],
+    queryKey: ['people'],
     queryFn: () =>
-      fetch("https://swapi.dev/api/people")
+      fetch('https://swapi.dev/api/people')
         .then((res) => res.json())
         .then((data) => data.results as { name: string }[]),
     initialData: [],
@@ -230,9 +353,9 @@ npm install @tanstack/store
 Now let's create a simple counter in the `src/App.tsx` file as a demonstration.
 
 ```tsx
-import { useStore } from "@tanstack/react-store";
-import { Store } from "@tanstack/store";
-import "./App.css";
+import { useStore } from '@tanstack/react-store';
+import { Store } from '@tanstack/store';
+import './App.css';
 
 const countStore = new Store(0);
 
@@ -255,9 +378,9 @@ One of the many nice features of TanStack Store is the ability to derive state f
 Let's check this out by doubling the count using derived state.
 
 ```tsx
-import { useStore } from "@tanstack/react-store";
-import { Store, Derived } from "@tanstack/store";
-import "./App.css";
+import { useStore } from '@tanstack/react-store';
+import { Store, Derived } from '@tanstack/store';
+import './App.css';
 
 const countStore = new Store(0);
 
