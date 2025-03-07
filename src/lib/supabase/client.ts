@@ -1,5 +1,6 @@
 // todo: Database;
 
+import type { Database } from '@/shared/api/supabase';
 import {
   createClient as createSupabaseClient,
   SupabaseClient,
