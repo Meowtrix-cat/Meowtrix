@@ -1,33 +1,116 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
+import js from '@eslint/js';
+import { FlatCompat } from '@eslint/eslintrc';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+  recommendedConfig: js.configs.recommended,
+});
 
 export default [
-  { ignores: ['dist'] },
+  js.configs.recommended,
+  ...compat.extends(
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:import/recommended',
+    'plugin:import/typescript',
+    'plugin:prettier/recommended'
+  ),
   {
-    files: ['**/*.{js,jsx}'],
     languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
+      ecmaVersion: 'latest',
+      sourceType: 'module',
       parserOptions: {
-        ecmaVersion: 'latest',
-        ecmaFeatures: { jsx: true },
-        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+      globals: {
+        document: 'readonly',
+        navigator: 'readonly',
+        window: 'readonly',
       },
     },
-    plugins: {
-      'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
+    settings: {
+      react: {
+        version: 'detect',
+      },
+      'import/resolver': {
+        typescript: {
+          alwaysTryTypes: true,
+        },
+        node: {
+          extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        },
+      },
     },
     rules: {
-      ...js.configs.recommended.rules,
-      ...reactHooks.configs.recommended.rules,
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
+      'react/react-in-jsx-scope': 'off',
+      'prettier/prettier': ['error', {}, { usePrettierrc: true }],
+      'import/no-internal-modules': [
+        'error',
+        {
+          allow: [
+            '**/index',
+            '**/index.tsx',
+            '**/index.ts',
+            '@/*',
+            'react-dom/client',
+          ],
+        },
+      ],
+      'import/no-restricted-paths': [
+        'error',
+        {
+          zones: [
+            {
+              target: './src/entities',
+              from: './src/features',
+            },
+            {
+              target: './src/entities',
+              from: './src/widgets',
+            },
+            {
+              target: './src/entities',
+              from: './src/pages',
+            },
+            {
+              target: './src/shared',
+              from: './src/entities',
+            },
+            {
+              target: './src/shared',
+              from: './src/features',
+            },
+            {
+              target: './src/shared',
+              from: './src/widgets',
+            },
+            {
+              target: './src/shared',
+              from: './src/pages',
+            },
+            {
+              target: './src/features',
+              from: './src/widgets',
+            },
+            {
+              target: './src/features',
+              from: './src/pages',
+            },
+            {
+              target: './src/widgets',
+              from: './src/pages',
+            },
+          ],
+        },
       ],
     },
   },
-]
+];
