@@ -51,7 +51,13 @@ export default [
     },
     rules: {
       'react/react-in-jsx-scope': 'off',
-      'prettier/prettier': ['error', {}, { usePrettierrc: true }],
+      'prettier/prettier': [
+        'error',
+        {
+          endOfLine: 'auto',
+        },
+        { usePrettierrc: true },
+      ],
       'import/no-internal-modules': [
         'error',
         {
